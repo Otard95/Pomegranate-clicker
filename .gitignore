@@ -24,7 +24,13 @@ build/Release
 
 # Dependency directory
 # https://docs.npmjs.com/cli/shrinkwrap#caveats
-node_modules
+node_modules/*/*
+node_modules/.yarn-integrity
+
+
+# Exclude licensed modules
+!node_modules/express/LICENSE
+!node_modules/socket.io*/LICENSE
 
 # Debug log from npm
 npm-debug.log
