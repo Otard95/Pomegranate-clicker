@@ -11,14 +11,17 @@ module.exports = function(server){
 var io = require('socket.io')(server);
 
 var SOCKET_LIST = {};
+var CLIENT_LIST = {};
 
 /*
  * Initilize game class
  */
 
-var game = require('./game.js');
+//var game = require('./game.js');
 
 io.on('connection', function(socket) {
+
+  console.log(socket.id);
 
   // Socket Connect
 
