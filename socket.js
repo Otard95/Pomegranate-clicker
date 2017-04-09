@@ -21,16 +21,16 @@ var CLIENT_LIST = {};
 
 io.on('connection', function(socket) {
 
-  console.log(socket.id);
+  console.log('Socket connected | ID: ' + socket.id);
 
-  // Socket Connect
+  SOCKET_LIST[socket.id] = socket;
+  // CLIENT_LIST[socket.id] = ???
 
   // disconnect client
   socket.on('disconnect', function() {
-    console.log('Socket disconnected | Socket: ' + socket.id);
+    console.log('Socket disconnected | ID: ' + socket.id);
     delete SOCKET_LIST[socket.id];
-    game.remove(socket.id);
-    io.emit('playerLeave', {id: socket.id});
+    // game.remove(socket.id);
   });
 
 });
