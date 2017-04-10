@@ -2,7 +2,7 @@
 
 var   gulp        = require('gulp');
 var   sass        = require('gulp-sass');
-//const pug         = require('gulp-pug2');
+const pug         = require('gulp-pug2');
 var   browserSync = require('browser-sync').create();
 var   rename      = require('gulp-rename');
 var   uglify      = require('gulp-uglify');
@@ -15,7 +15,6 @@ gulp.task('reload', function() {
   browserSync.reload();
 });
 
-// No Pug as of yet
 // gulp.task('pug', function() {
 //     return gulp.src('./_pug/**/*.pug')
 //         .pipe(pug())
@@ -41,5 +40,6 @@ gulp.task('js', function() {
 gulp.task('default', ['browser-sync'], function () {
   gulp.watch(['./_sass/*.sass', './_sass/*.scss'], ['sass']);
   gulp.watch('./_js/**/*.js', ['js']);
+  //gulp.watch('./_pug/**/*.pug', ['pug']);
   gulp.watch(['./routes/**/*.js', './views/**/*.pug', ], ['reload']);
 });

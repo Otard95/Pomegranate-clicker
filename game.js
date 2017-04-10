@@ -42,6 +42,7 @@ var game = {
     } // ### END 'var self'
 
     this.players[id] = self;
+    return true;
   },
   newId: function() { // example: _NLFk0yege0-O0_OAAAB
     var r = '';

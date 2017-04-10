@@ -84,20 +84,21 @@ io.on('connection', function(socket) {
   socket.on('userCreate', function(data) {
 
     // Make sure socket has unique id | _NLFk0yege0-O0_OAAAB
-    var newid = game.newId();
+    var newid = game.newId(); // creates a unused alphanumerical id
     while(game.players[newid] != null) {
       newid = game.newId();
     }
 
     // try creating the user. return bool if successful inform user of userId
-    if( game.newPlayer(newid, data.name) ) {
+    if( game.newPlayer(newid, data.name) ) { // returns true if player-name is available
 
       socket.emit('userCreate', {status: true, id: newid});
-      console.log('Socket ' + socket.id + ' created user: (' + newId + ')' + data.name);
+      console.log('Socket ' + socket.id + ' created user: (' + newid + ')' + data.name);
 
     } else {
 
-        socket.emit('userCreate', {status: false, msg: 'Username allready in use.'});
+      socket.emit('userCreate', {status: false, msg: 'Username allready in use.'});
+      console.log('User creation failed');
 
     }
   });
