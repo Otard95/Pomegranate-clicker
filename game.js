@@ -11,21 +11,21 @@ var game = {
   updrages: {
     deseeder: {
       sps: 1,
-      lvlMult: 1.01,
+      lvlMult: 0.1,
       cost: 10,
-      costMult: 1.05
+      costMult: 0.5
     },
     backyardShrub: {
       sps: 5,
-      lvlMult: 1.02,
+      lvlMult: 0.2,
       cost: 50,
-      costMult: 1.08
+      costMult: 0.8
     },
     backyardTree: {
       sps: 10,
-      lvlMult: 1.02,
+      lvlMult: 0.2,
       cost: 100,
-      costMult: 1.08
+      costMult: 0.8
     }
   },
   newPlayer: function(id, newName) {
@@ -34,6 +34,7 @@ var game = {
       name: newName,
       seeds: 0,
       sps: 0,
+      accumulated: 0,
       updrages: {
         deseeder: {
           lvl: 0,
@@ -55,18 +56,27 @@ var game = {
       updateSPS: function() {
         this.sps = 0;
         for (var upgrade in this.upgrades) {
-          //          ( the upgraded base sps    *  players upgrade count ) * ( the upgrades lvl multiplyer   *  players upgrade count )
-          this.sps += (game.upgrades[upgrade].sps * this.upgrades[upgrade]) * (game.upgrades[upgrade].lvlMult * this.upgrades[upgrade]);
+          /*          ( the upgraded base sps    *  players upgrade count )
+                    + ( the upgraded base sps    *  ( the upgrades lvl multiplyer  *  players upgrade count ))
+          */
+          this.sps += (game.upgrades[upgrade].sps * this.upgrades[upgrade].lvl) +
+                      (game.upgrades[upgrade].sps * (game.upgrades[upgrade].lvlMult * this.upgrades[upgrade].lvl));
         }
       },
       getStriped: function() {
         var r = {
           name: this.name,
           seeds: Math.round(this.seeds),
-          sps: this.sps,
+          sps: Math.round(this.sps),
           updrages: this.updrages
         }
         return r;
+      },
+      addSeeds: function(n) {
+        if(n > 45) return false;
+        this.accumulated += n;
+        this.seeds += n;
+        return true;
       }
     } // ### END 'var self'
 
@@ -87,7 +97,8 @@ var game = {
     return false;
   },
   getUpgradeCost: function(name, lvl) {
-
+    return Math.round(this.upgrades[name].cost * lvl +
+           (this.upgrades[name].cost * (this.upgrades[name].costMult * lvl)));
   }
 }
 
