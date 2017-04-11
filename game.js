@@ -9,9 +9,24 @@ var game = {
            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
            'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_', '-', '%', '&', '?'],
   updrages: {
-    deSeeder: 0,
-    backyardShrub: 0,
-    backyardTree: 0
+    deseeder: {
+      sps: 1,
+      lvlMult: 1.01,
+      cost: 10,
+      costMult: 1.05
+    },
+    backyardShrub: {
+      sps: 5,
+      lvlMult: 1.02,
+      cost: 50,
+      costMult: 1.08
+    },
+    backyardTree: {
+      sps: 10,
+      lvlMult: 1.02,
+      cost: 100,
+      costMult: 1.08
+    }
   },
   newPlayer: function(id, newName) {
     if(game.playerNameTaken(newName)) return false;
@@ -20,20 +35,34 @@ var game = {
       seeds: 0,
       sps: 0,
       updrages: {
-        deseeder: 0,
-        backyardShrub: 0,
-        backyardTree: 0
+        deseeder: {
+          lvl: 0,
+          cost: game.getUpgradeCost('deseeder', 0)
+        },
+        backyardShrub: {
+          lvl: 0,
+          cost: game.getUpgradeCost('backyardShrub', 0)
+        },
+        backyardTree: {
+          lvl: 0,
+          cost: game.getUpgradeCost('backyardTree', 0)
+        }
+      },
+      updateSeeds: function(delta) {
+        this.updateSPS();
+        this.seeds += sps * delta;
       },
       updateSPS: function() {
         this.sps = 0;
         for (var upgrade in this.upgrades) {
-          this.sps += game.upgrades[upgrade].sps * this.upgrades[upgrade];
+          //          ( the upgraded base sps    *  players upgrade count ) * ( the upgrades lvl multiplyer   *  players upgrade count )
+          this.sps += (game.upgrades[upgrade].sps * this.upgrades[upgrade]) * (game.upgrades[upgrade].lvlMult * this.upgrades[upgrade]);
         }
       },
       getStriped: function() {
         var r = {
           name: this.name,
-          seeds: this.seeds,
+          seeds: Math.round(this.seeds),
           sps: this.sps,
           updrages: this.updrages
         }
@@ -56,6 +85,9 @@ var game = {
       if(this.players[p].name == n) return true;
     }
     return false;
+  },
+  getUpgradeCost: function(name, lvl) {
+
   }
 }
 
