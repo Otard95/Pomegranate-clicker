@@ -37,3 +37,6 @@ npm-debug.log
 
 # Yarn
 yarn.lock
+
+# Private/Local Files
+*.local.*
