@@ -82,10 +82,11 @@ var game = {
         if ( this.upgrades[name] == null ) return false;
         if ( this.upgrades[name].cost > this.seeds ) return false;
 
-        this.seeds -= this.upgrades[name].cost;
-        this.upgrades[name].lvl++;
+        this.seeds -= this.upgrades[name].cost; // subtract cost from seeds
+        this.upgrades[name].lvl++; // increment lvl
+        // update upgradecost 
         this.upgrades[name].cost = game.getUpgradeCost(name, this.upgrades[name].lvl);
-        
+
         return true;
       }
     } // ### END 'var self'
