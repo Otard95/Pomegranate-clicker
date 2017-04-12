@@ -14,7 +14,7 @@ var SOCKET_LIST = {};
 var CLIENT_LIST = {
   containsPlayer: function(id) {
     for (var c in this) {
-      if (this[c].uId == id) {
+      if (this[c].pId == id) {
         return true;
       }
       return false;
@@ -22,9 +22,11 @@ var CLIENT_LIST = {
   }
 };
 
+var badChar = ['"', "'", '<', '>'];
+
 var client = function() {
   var c = {
-    uId: null,
+    pId: null,
     cookieProfileChech: false
   }
   return c;
@@ -44,63 +46,127 @@ io.on('connection', function(socket) {
   SOCKET_LIST[socket.id] = socket;
   CLIENT_LIST[socket.id] = client();
 
-  socket.emit('welcome', {msg: 'Hey!'});
+  socket.on('click', function(data) {
 
+    if ( validateInput(data.n, 'number') ) { // Input valid
 
-   /// ######## Implement safeguards!!!
+      var playerId = CLIENT_LIST[socket.id].pId;
+      if ( !game.players[playerId].addSeeds ) {
+
+        console.log('[on.click] (' + socket.id + ') Exceeded clicks per secound!');
+
+        kick(socket, 'Client exceeded clicks per secound. ' +
+                     'If you feel this is an error please contact us.');
+
+      }
+
+    } else { // invalid input
+
+      console.log('[on.click] (' + socket.id + ') Sendt invalid data!');
+
+      kick(socket, 'Client sendt invalid data. ' +
+                   'If you feel this is an error please contact us.');
+
+    }
+  });
+
+  socket.on('buyUpgrade', function(data) {
+
+    if ( validateInput(data.name, 'string') ) {
+
+      var playerId = CLIENT_LIST[socket.id].pId;
+      if ( game.players[playerId].buyUpgrade(name) ) {
+        socket.emit('buyUpgrade', {
+                                  status: true,
+                                  player: game.player[playerId].getStriped()
+                                  });
+      } else {
+        socket.emit('buyUpgrade', { status: false });
+      }
+
+    } else {
+
+      console.log('[on.buyUpgrade] (' + socket.id + ') Sendt invalid data!');
+
+      kick(socket, 'Client sendt invalid data. ' +
+                   'If you feel this is an error please contact us.');
+
+    }
+
+  });
+
   socket.on('hasPlayer', function(data) {
-    if ( CLIENT_LIST[socket.id].cookieProfileChech == true ) {
+
+    if( !validateInput(data.id, 'string') ) {
+
+      console.log('[on.hasPlayer] (' + socket.id + ') Sendt invalid data!');
+
+      kick(socket, 'Client sendt invalid data. ' +
+                   'If you feel this is an error please contact us.');
+
+    } else if ( CLIENT_LIST[socket.id].cookieProfileChech == true ) {
+
+      console.log('[on.hasPlayer] (' + socket.id + ') Exceeded player profile linking attempts');
 
       // Client tries to connect to a player profile more than once
       // This should never happen so kick the user
       kick(socket, 'Client atempted to connect to a player profile more than once. '+
                    'If you feel this is an error please contact us.');
-     console.log(socket.id + ' exceeded player profile linking attempts');
 
     } else if( CLIENT_LIST.containsPlayer(data.id) ) { // Player allready loged in
 
       socket.emit('hasPlayer', {status: false, msg: 'You are allready loged in'});
       CLIENT_LIST[socket.id].cookieProfileChech = true;
-      console.log(socket.id + ' player allready loged in');
+      console.log('[on.hasPlayer] (' + socket.id + ') Player allready loged in');
 
     } else if ( game.players[data.id] == null ){ // False player id
 
       socket.emit('hasPlayer', {status: false, msg: 'ivalid player'});
       CLIENT_LIST[socket.id].cookieProfileChech = true;
-      console.log(socket.id + ' player id invalid');
+      console.log('[on.hasPlayer] (' + socket.id + ') Player id invalid');
 
     } else {
 
-      CLIENT_LIST[socket.id].uId = data.id;
+      CLIENT_LIST[socket.id].pId = data.id;
       CLIENT_LIST[socket.id].cookieProfileChech = true;
       socket.emit('hasPlayer', {status: true, player: game.players[data.id].getStriped() });
-      console.log(socket.id + ' player link successful');
+      console.log('[on.hasPlayer] (' + socket.id + ') Player link successful');
 
     }
   });
 
+  socket.on('userCreate', function(data) { // Input valid
 
-  /// ######## Implement safeguards!!!
-  socket.on('userCreate', function(data) {
+    if( validateInput(data.name, 'string') ) {
 
-    // Make sure socket has unique id | _NLFk0yege0-O0_OAAAB
-    var newid = game.newId(); // creates a unused alphanumerical id
-    while(game.players[newid] != null) {
-      newid = game.newId();
+      // Make sure socket has unique id | _NLFk0yege0-O0_OAAAB
+      var newid = game.newId(); // creates a unused alphanumerical id
+      while(game.players[newid] != null) {
+        newid = game.newId();
+      }
+
+      // try creating the user. return bool if successful inform user of userId
+      if( game.newPlayer(newid, data.name) ) { // returns true if player-name is available
+
+        socket.emit('userCreate', {status: true, id: newid});
+        console.log('[on.userCreate] (' + socket.id + ') created user: (' + newid + ')' + data.name);
+
+      } else {
+
+        socket.emit('userCreate', {status: false, msg: 'Username allready in use.'});
+        console.log('[on.userCreate] (' + socket.id + ') User creation failed');
+
+      }
+
+    } else { // Input invalid
+
+      console.log('[on.userCreate] (' + socket.id + ') Sendt invalid data!');
+
+      kick(socket, 'Client sendt invalid data. ' +
+                   'If you feel this is an error please contact us.');
+
     }
 
-    // try creating the user. return bool if successful inform user of userId
-    if( game.newPlayer(newid, data.name) ) { // returns true if player-name is available
-
-      socket.emit('userCreate', {status: true, id: newid});
-      console.log('Socket ' + socket.id + ' created user: (' + newid + ')' + data.name);
-
-    } else {
-
-      socket.emit('userCreate', {status: false, msg: 'Username allready in use.'});
-      console.log('User creation failed');
-
-    }
   });
 
   // disconnect client
@@ -156,7 +222,19 @@ function cloneObject(obj) {
 }
 
 
+function validateInput(val, type) {
+  if (val == null) return false; // Value should not be 'null'
+  if (typeof val == 'object') return false; // value should not be an object
+  if (typeof val != type) return false; // should not be incorrect type (ofc)
 
+  if (type == 'string') { // A string should not contain bad chars
+    for (var i in badChar) {
+      if( val.indexOf(badChar[c]) > -1 ) return false;
+    }
+  }
+
+  return true;
+}
 
 
 } // ### END EXPORT

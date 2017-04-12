@@ -84,7 +84,7 @@ var game = {
 
         this.seeds -= this.upgrades[name].cost; // subtract cost from seeds
         this.upgrades[name].lvl++; // increment lvl
-        // update upgradecost 
+        // update upgradecost
         this.upgrades[name].cost = game.getUpgradeCost(name, this.upgrades[name].lvl);
 
         return true;
@@ -96,7 +96,7 @@ var game = {
   },
   newId: function() { // example: _NLFk0yege0-O0_OAAAB
     var r = '';
-    while (r.length < 10) {
+    while (r.length < 20) {
       r += this.gdChar[Math.floor(Math.random() * this.gdChar.length)];
     }
     return r;
