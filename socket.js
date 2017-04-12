@@ -148,7 +148,11 @@ io.on('connection', function(socket) {
       // try creating the user. return bool if successful inform user of userId
       if( game.newPlayer(newid, data.name) ) { // returns true if player-name is available
 
-        socket.emit('userCreate', {status: true, id: newid});
+        socket.emit('userCreate', {
+                                  status: true,
+                                  id: newid,
+                                  player: game.players[newid].getStriped()
+                                });
         console.log('[on.userCreate] (' + socket.id + ') created user: (' + newid + ')' + data.name);
 
       } else {
@@ -229,7 +233,7 @@ function validateInput(val, type) {
 
   if (type == 'string') { // A string should not contain bad chars
     for (var i in badChar) {
-      if( val.indexOf(badChar[c]) > -1 ) return false;
+      if( val.indexOf(badChar[i]) > -1 ) return false;
     }
   }
 
