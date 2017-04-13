@@ -32,6 +32,7 @@ var game = {
     if(game.playerNameTaken(newName)) return false;
     var self = {
       name: newName,
+      lastClick: 0,
       seeds: 0,
       sps: 0,
       accumulated: 0,

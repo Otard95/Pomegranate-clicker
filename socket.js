@@ -38,6 +38,10 @@ var client = function() {
 
 var game = require('./game.js');
 
+/*
+ * Socket Listners
+ */
+
 io.on('connection', function(socket) {
 
   // On Connection
@@ -51,7 +55,8 @@ io.on('connection', function(socket) {
     if ( validateInput(data.n, 'number') ) { // Input valid
 
       var playerId = CLIENT_LIST[socket.id].pId;
-      if ( !game.players[playerId].addSeeds ) {
+      if ( !game.players[playerId].addSeeds
+          || time.since(game.player[playerId].lastClick) < 800 ) {
 
         console.log('[on.click] (' + socket.id + ') Exceeded clicks per secound!');
 
@@ -68,6 +73,7 @@ io.on('connection', function(socket) {
                    'If you feel this is an error please contact us.');
 
     }
+    game.player[playerId].lastClick += time.since(game.player[playerId].lastClick);
   });
 
   socket.on('buyUpgrade', function(data) {
@@ -135,9 +141,9 @@ io.on('connection', function(socket) {
     }
   });
 
-  socket.on('userCreate', function(data) { // Input valid
+  socket.on('userCreate', function(data) {
 
-    if( validateInput(data.name, 'string') ) {
+    if( validateInput(data.name, 'string') ) { // Input valid
 
       // Make sure socket has unique id | _NLFk0yege0-O0_OAAAB
       var newid = game.newId(); // creates a unused alphanumerical id
@@ -202,9 +208,13 @@ function kick(socket, reason) {
 var time  = {
   last: +new Date(),
   delta: function() { // Returns the time in seconds since last frame
-    r = ((+new Date()) - this.last) / 1000;
+    var r = ((+new Date()) - this.last) / 1000;
     this.last = +new Date();
     return r;
+  },
+  since: function(t) {
+    var now = (+new Date());
+    return now - t;
   }
 }
 
