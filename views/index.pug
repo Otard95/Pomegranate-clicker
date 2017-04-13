@@ -1,6 +1,30 @@
 extends layout
 
 block content
-  h1.title #{title}
-  p.welcome Welcome to 
-    strong  #{title}
+  nav
+    a(href="/")
+      img(src="assets/imgs/logo.png", 
+          alt="The is a simple computer made image of a pomegranate").logo
+      h3 #{title}
+  
+  .container.row
+    .col.c2
+      .pomegranate
+      
+      hr
+        
+      h2.seeds Seeds
+      .seedCounter
+      h2.sps SPS
+      .spsCounter
+    
+    .col.c2
+      .upgrades
+        h2 Upgrades
+        .row
+        .col.c3.upgrade
+          
+        .col.c3.upgrade
+          
+        .col.c3.upgrade
+    
