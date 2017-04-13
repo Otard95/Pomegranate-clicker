@@ -85,7 +85,7 @@ $(document).ready(function() {
   game.dom.seeds = $('#seedCounter');
   game.dom.sps = $('#spsCounter');
   $.each(game.dom.upgrades, function(key, val) {
-    
+
   })
 
 });
