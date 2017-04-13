@@ -56,5 +56,36 @@ var game = {
         cost: 0
       }
     }
+  },
+  dom: {
+    seeds: null,
+    sps: null,
+    updrades: {
+      deseeder: {
+        base: null,
+        lvl: null,
+        cost: null
+      },
+      backyardShrub: {
+        base: null,
+        lvl: null,
+        cost: null
+      },
+      backyardTree: {
+        base: null,
+        lvl: null,
+        cost: null
+      }
+    }
   }
 };
+
+$(document).ready(function() {
+
+  game.dom.seeds = $('#seedCounter');
+  game.dom.sps = $('#spsCounter');
+  $.each(game.dom.upgrades, function(key, val) {
+    
+  })
+
+});
