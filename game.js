@@ -70,7 +70,7 @@ var game = {
           seeds: Math.round(this.seeds),
           sps: Math.round(this.sps),
           upgrades: this.upgrades
-        }
+        };
         return r;
       },
       addSeeds: function(n) {
@@ -80,7 +80,7 @@ var game = {
         return true;
       },
       buyUpgrade: function(name) {
-        if ( this.upgrades[name] == null ) return false;
+        if ( this.upgrades[name] === null ) return false;
         if ( this.upgrades[name].cost > this.seeds ) return false;
 
         this.seeds -= this.upgrades[name].cost; // subtract cost from seeds
@@ -90,28 +90,11 @@ var game = {
 
         return true;
       }
-    } // ### END 'var self'
+    }; // ### END 'var self'
 
     this.players[id] = self;
     return true;
-  },
-  newId: function() { // example: _NLFk0yege0-O0_OAAAB
-    var r = '';
-    while (r.length < 20) {
-      r += this.gdChar[Math.floor(Math.random() * this.gdChar.length)];
-    }
-    return r;
-  },
-  playerNameTaken(n) {
-    for (var p in this.players) {
-      if (this.players[p].name == n) return true;
-    }
-    return false;
-  },
-  getUpgradeCost: function(name, lvl) {
-    return Math.round(this.upgrades[name].cost * lvl +
-           (this.upgrades[name].cost * (this.upgrades[name].costMult * lvl)));
   }
-}
+};
 
 module.exports = game;

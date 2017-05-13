@@ -28,15 +28,16 @@ var client = function() {
   var c = {
     pId: null,
     cookieProfileChech: false
-  }
+  };
   return c;
-}
+};
 
 /*
  * Initilize game class
  */
 
-var game = require('./game.js');
+var Game = require('./_classes/game_class.js'); // get the class
+var game = new Game(20); // instantiate class
 
 /*
  * Socket Listners
@@ -50,57 +51,6 @@ io.on('connection', function(socket) {
   SOCKET_LIST[socket.id] = socket;
   CLIENT_LIST[socket.id] = client();
 
-  socket.on('click', function(data) {
-
-    if ( validateInput(data.n, 'number') ) { // Input valid
-
-      var playerId = CLIENT_LIST[socket.id].pId;
-      if ( !game.players[playerId].addSeeds
-          || time.since(game.player[playerId].lastClick) < 800 ) {
-
-        console.log('[on.click] (' + socket.id + ') Exceeded clicks per secound!');
-
-        kick(socket, 'Client exceeded clicks per secound. ' +
-                     'If you feel this is an error please contact us.');
-
-      }
-
-    } else { // invalid input
-
-      console.log('[on.click] (' + socket.id + ') Sendt invalid data!');
-
-      kick(socket, 'Client sendt invalid data. ' +
-                   'If you feel this is an error please contact us.');
-
-    }
-    game.player[playerId].lastClick += time.since(game.player[playerId].lastClick);
-  });
-
-  socket.on('buyUpgrade', function(data) {
-
-    if ( validateInput(data.name, 'string') ) {
-
-      var playerId = CLIENT_LIST[socket.id].pId;
-      if ( game.players[playerId].buyUpgrade(name) ) {
-        socket.emit('buyUpgrade', {
-                                  status: true,
-                                  player: game.player[playerId].getStriped()
-                                  });
-      } else {
-        socket.emit('buyUpgrade', { status: false });
-      }
-
-    } else {
-
-      console.log('[on.buyUpgrade] (' + socket.id + ') Sendt invalid data!');
-
-      kick(socket, 'Client sendt invalid data. ' +
-                   'If you feel this is an error please contact us.');
-
-    }
-
-  });
-
   socket.on('hasPlayer', function(data) {
 
     if( !validateInput(data.id, 'string') ) {
@@ -110,24 +60,32 @@ io.on('connection', function(socket) {
       kick(socket, 'Client sendt invalid data. ' +
                    'If you feel this is an error please contact us.');
 
-    } else if ( CLIENT_LIST[socket.id].cookieProfileChech == true ) {
+    } else if ( CLIENT_LIST[socket.id].cookieProfileChech ) {
 
       console.log('[on.hasPlayer] (' + socket.id + ') Exceeded player profile linking attempts');
 
       // Client tries to connect to a player profile more than once
       // This should never happen so kick the user
-      kick(socket, 'Client atempted to connect to a player profile more than once. '+
+      kick(socket, 'Client atempted to connect to a player profile more than once.</br>'+
                    'If you feel this is an error please contact us.');
 
-    } else if( CLIENT_LIST.containsPlayer(data.id) ) { // Player allready loged in
+    } else if( CLIENT_LIST.containsPlayer(data.id) ) { // Player allready logged in
 
-      socket.emit('hasPlayer', {status: false, msg: 'You are allready loged in'});
+      socket.emit('hasPlayer', {
+        status: false,
+        err: true,
+        title: 'Allready logged in',
+        msg: 'You seem to be logged in somewhere else. ' +
+        'Logout from all sessions and try again.</br>' +
+        '<strong>Note:</strong> The session might take a minute to end, ' +
+        'so try waiting a bit before retrying.'});
+
       CLIENT_LIST[socket.id].cookieProfileChech = true;
-      console.log('[on.hasPlayer] (' + socket.id + ') Player allready loged in');
+      console.log('[on.hasPlayer] (' + socket.id + ') Player allready logged in');
 
-    } else if ( game.players[data.id] == null ){ // False player id
+    } else if ( game.players[data.id] === undefined ){ // False player id
 
-      socket.emit('hasPlayer', {status: false, msg: 'ivalid player'});
+      socket.emit('hasPlayer', {status: false, err: false});
       CLIENT_LIST[socket.id].cookieProfileChech = true;
       console.log('[on.hasPlayer] (' + socket.id + ') Player id invalid');
 
@@ -147,8 +105,33 @@ io.on('connection', function(socket) {
 
       // Make sure socket has unique id | _NLFk0yege0-O0_OAAAB
       var newid = game.newId(); // creates a unused alphanumerical id
-      while(game.players[newid] != null) {
+      while(game.players[newid] !== undefined) {
         newid = game.newId();
+      }
+
+      //basick name restriction check
+      if (data.name.length < 2) { // name not long enough
+        socket.emit('userCreate', {
+          status: false,
+          err: true,
+          msg: 'Your nickname needs to be at least 2 charaters long.'
+        });
+
+        console.log('[on.userCreate] (' + socket.id + ') User creation failed | Nick length');
+
+        return;
+
+      } else if (data.name.length > 12) {
+        socket.emit('userCreate', {
+          status: false,
+          err: true,
+          msg: "Your nickname can't be more than 12 charaters."
+        });
+
+        console.log('[on.userCreate] (' + socket.id + ') User creation failed | Nick length');
+
+        return;
+
       }
 
       // try creating the user. return bool if successful inform user of userId
@@ -159,11 +142,12 @@ io.on('connection', function(socket) {
                                   id: newid,
                                   player: game.players[newid].getStriped()
                                 });
+        CLIENT_LIST[socket.id].pId = newid;
         console.log('[on.userCreate] (' + socket.id + ') created user: (' + newid + ')' + data.name);
 
       } else {
 
-        socket.emit('userCreate', {status: false, msg: 'Username allready in use.'});
+        socket.emit('userCreate', {status: false, err: true, msg: 'Username allready in use.'});
         console.log('[on.userCreate] (' + socket.id + ') User creation failed');
 
       }
@@ -179,13 +163,67 @@ io.on('connection', function(socket) {
 
   });
 
+  socket.on('click', function(data) {
+
+    if ( validateInput(data.n, 'number') ) { // Input valid
+
+      var playerId = CLIENT_LIST[socket.id].pId;
+      if ( !game.players[playerId].addSeeds(data.n) ||
+           time.since(game.players[playerId].lastClick) < 800 ) {
+
+        console.log('[on.click] (' + socket.id + ') Exceeded clicks per secound!');
+
+        kick(socket, 'Client exceeded clicks per secound. ' +
+                     'If you feel this is an error please contact us.');
+
+      } else {
+
+        game.players[playerId].lastClick = (+new Date());
+        socket.emit('click', { player: game.players[playerId].getStriped() });
+
+      }
+
+    } else { // invalid input
+
+      console.log('[on.click] (' + socket.id + ') Sendt invalid data!');
+
+      kick(socket, 'Client sendt invalid data. ' +
+                   'If you feel this is an error please contact us.');
+
+    }
+  });
+
+  socket.on('buyUpgrade', function(data) {
+
+    if ( validateInput(data.name, 'string') ) {
+
+      var playerId = CLIENT_LIST[socket.id].pId;
+      if ( game.upgradePurchase(playerId, data.name) ) {
+        socket.emit('buyUpgrade', {
+                                  status: true,
+                                  player: game.player[playerId].getStriped()
+                                  });
+      } else {
+        socket.emit('buyUpgrade', { status: false });
+      }
+
+    } else {
+
+      console.log('[on.buyUpgrade] (' + socket.id + ') Sendt invalid data!');
+
+      kick(socket, 'Client sendt invalid data. ' +
+                   'If you feel this is an error please contact us.');
+
+    }
+
+  });
+
   // disconnect client
   socket.on('disconnect', function() {
 
     console.log('Socket disconnected | ID: ' + socket.id);
     delete SOCKET_LIST[socket.id];
     delete CLIENT_LIST[socket.id];
-    // game.remove(socket.id);
 
   });
 
@@ -216,28 +254,10 @@ var time  = {
     var now = (+new Date());
     return now - t;
   }
-}
-
-
-// recursive function to clone an object. If a non object parameter
-// is passed in, that parameter is returned and no recursion occurs.
-
-function cloneObject(obj) {
-    if (obj === null || typeof obj !== 'object') {
-        return obj;
-    }
-
-    var temp = obj.constructor(); // give temp the original obj's constructor
-    for (var key in obj) {
-        temp[key] = cloneObject(obj[key]);
-    }
-
-    return temp;
-}
-
+};
 
 function validateInput(val, type) {
-  if (val == null) return false; // Value should not be 'null'
+  if (val === null) return false; // Value should not be 'null'
   if (typeof val == 'object') return false; // value should not be an object
   if (typeof val != type) return false; // should not be incorrect type (ofc)
 
@@ -251,4 +271,4 @@ function validateInput(val, type) {
 }
 
 
-} // ### END EXPORT
+}; // ### END EXPORT

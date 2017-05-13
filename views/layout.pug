@@ -12,4 +12,18 @@ html
     script(src="/assets/js/socket.io.min.js") //- /assets/js/socket.io.min.js | https://cdn.socket.io/socket.io-1.4.5.js | https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js
     script(src="/assets/js/main.min.js")
   body
+    
+    .overlay
+      .msgBox.rel
+        .closeBtn
+        h1.title Title here
+        hr
+        p.msg msg goes here
+    
+    nav
+      a(href="/")
+        img(src="assets/imgs/logo.png", 
+            alt="The is a simple computer made image of a pomegranate").logo
+        h3 #{title}
+        
     block content

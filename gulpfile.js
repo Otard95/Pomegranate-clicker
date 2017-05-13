@@ -22,7 +22,7 @@ gulp.task('reload', function() {
 // });
 
 gulp.task('sass', function () {
-  return gulp.src(['./_sass/*.sass', './_sass/*.scss'])
+  return gulp.src(['./_sass/*.sass', './_sass/*.scss', '!./_sass/_*.sass', '!./_sass/_*.scss'])
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
     .pipe(rename({extname: '.min.css'}))
     .pipe(gulp.dest('./public/assets/css'))
@@ -33,13 +33,12 @@ gulp.task('js', function() {
   return gulp.src('_js/**/*.js')
     .pipe(uglify())
     .pipe(rename({extname: '.min.js'}))
-    .pipe(gulp.dest('./public/assets/js'))
-    .pipe(browserSync.reload({ stream:true }));
+    .pipe(gulp.dest('./public/assets/js'));
 });
 
 gulp.task('default', ['browser-sync'], function () {
-  gulp.watch(['./_sass/*.sass', './_sass/*.scss'], ['sass']);
+  gulp.watch(['./_sass/*.sass', './_sass/*.scss', '!./_sass/_*.sass', '!./_sass/_*.scss'], ['sass']);
   gulp.watch('./_js/**/*.js', ['js']);
   //gulp.watch('./_pug/**/*.pug', ['pug']);
-  gulp.watch(['./routes/**/*.js', './views/**/*.pug', ], ['reload']);
+  gulp.watch(['./routes/**/*.js', './views/**/*.pug', './public/assets/**/*.*'], ['reload']);
 });

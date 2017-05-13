@@ -1,0 +1,31 @@
+.game .pomegranate {
+		width: 65%;
+		margin-left: 17.5%;
+		cursor: pointer;
+}
+
+.game #seedCounter, .game #spsCounter {
+		font-weight: 600;
+		font-size: 1.5em;
+}
+
+.game .sps {
+		margin-top: 10px;
+		padding-top: 10px;
+}
+
+.game .upgrade {
+		height: 100px;
+		max-width: 300px;
+		background: pink;
+		text-align: center;
+}
+
+.game .upgrade .title {
+		margin: 0;
+		margin-top: -5;
+}
+
+.game .upgrade .icon {
+		height: 50%;
+}
