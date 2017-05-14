@@ -43,11 +43,12 @@ var player = class Player {
 
   buyUpgrade(upg) {
     if ( this.upgrades[upg].cost > this.seeds )
-      return this.upgrades[upg].lvl; // Player can aford upgrade
+      return this.upgrades[upg].lvl; // Player can't aford upgrade return current lvl
 
+    // player can aford upgrade
     this.seeds -= this.upgrades[upg].cost; // subtract cost from seeds
 
-    return this.upgrades[upg].lvl + 1; // Game object handles the rest
+    return this.upgrades[upg].lvl + 1; // return nxet lvl, 'Game object' handles the rest
   }
 
   getUpgradeLvl(upg) {
