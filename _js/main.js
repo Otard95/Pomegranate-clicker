@@ -112,10 +112,10 @@ var game = {
   },
   preGame: null,
   updateSeeds: function() {
-    this.dom.seeds.text(this.me.seeds + this.clicks);
+    this.dom.seeds.text(Math.floor(this.me.seeds + this.clicks));
   },
   updateSPS: function() {
-    this.dom.sps.text(this.me.sps);
+    this.dom.sps.text(Math.round(this.me.sps));
   },
   init: function() {
     console.log('init');

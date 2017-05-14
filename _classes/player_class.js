@@ -27,8 +27,8 @@ var player = class Player {
   getStriped() {
     var r = {
       name: this.name,
-      seeds: Math.round(this.seeds),
-      sps: Math.round(this.sps),
+      seeds: this.seeds,
+      sps: this.sps,
       upgrades: this.upgrades
     };
     return r;

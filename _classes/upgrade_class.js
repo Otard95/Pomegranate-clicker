@@ -23,7 +23,7 @@ var upgrade = class Upgrade {
   }
 
   getCost(l) {
-    return Math.round(this.cost + (this.cost * (this.costMult * l)));
+    return this.cost + (this.cost * (this.costMult * l));
   }
 
   getSps(l) {
