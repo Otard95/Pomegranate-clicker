@@ -196,10 +196,10 @@ $(document).ready(function() {
   // Game DOM Initialization
   game.dom.seeds = $('#seedCounter');
   game.dom.sps = $('#spsCounter');
-  $.each(game.dom.upgrades, function(key, val) {
-    game.dom.upgrades[key].base = $('#' + key);
-    game.dom.upgrades[key].lvl = $('#' + key + ' > .lvl');
-    game.dom.upgrades[key].cost = $('#' + key + ' > .cost');
+  $.each(game.dom.updrades, function(key, val) {
+    val.base = $('#' + key);
+    val.lvl = $('#' + key + ' > .lvl');
+    val.cost = $('#' + key + ' > .cost');
   });
   game.dom.pomegranate = $('#pomegranate');
 
