@@ -197,11 +197,13 @@ io.on('connection', function(socket) {
 
     if ( validateInput(data.name, 'string') ) {
 
+      console.log('upg');
+
       var playerId = CLIENT_LIST[socket.id].pId;
       if ( game.upgradePurchase(playerId, data.name) ) {
         socket.emit('buyUpgrade', {
                                   status: true,
-                                  player: game.player[playerId].getStriped()
+                                  player: game.players[playerId].getStriped()
                                   });
       } else {
         socket.emit('buyUpgrade', { status: false });

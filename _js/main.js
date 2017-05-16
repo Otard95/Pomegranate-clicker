@@ -19,7 +19,10 @@ socket.on('hasPlayer', function(data) {
     // Start game
     game.id = cookieGet('pId');
     game.me = data.player;
+
+    // update UI
     game.updateSeeds();
+    game.updateUpgrades();
 
     //console.log(game);
 
@@ -49,6 +52,9 @@ socket.on('userCreate', function(data) { // server response to userCreate
     document.cookie = "pId=" + data.id + ";" + expires + ";path=/"; // set the player id cookie
     game.preGame.hide();
 
+    // update UI
+    game.updateUpgrades();
+
     console.log(game);
 
   } else if(data.err) {
@@ -65,6 +71,10 @@ socket.on('buyUpgrade', function(data) {
 
   if (data.status) {
     game.me = data.player;
+
+    game.updateUpgrades();
+    game.updateSPS();
+
   } else {
     // Display fail msg to user
   }
@@ -96,16 +106,19 @@ var game = {
     updrades: {
       deseeder: {
         base: null,
+        title: null,
         lvl: null,
         cost: null
       },
       backyardShrub: {
         base: null,
+        title: null,
         lvl: null,
         cost: null
       },
       backyardTree: {
         base: null,
+        title: null,
         lvl: null,
         cost: null
       }
@@ -117,6 +130,13 @@ var game = {
   },
   updateSPS: function() {
     this.dom.sps.text(Math.round(this.me.sps));
+  },
+  updateUpgrades: function() {
+    $.each(game.dom.updrades, function(key, val) {
+      val.title.text(game.me.upgrades[key].name);
+      val.lvl.text(game.me.upgrades[key].lvl);
+      val.cost.text(game.me.upgrades[key].cost);
+    });
   },
   init: function() {
     console.log('init');
@@ -199,6 +219,7 @@ $(document).ready(function() {
   game.dom.sps = $('#spsCounter');
   $.each(game.dom.updrades, function(key, val) {
     val.base = $('#' + key);
+    val.title = $('#' + key + ' > .title');
     val.lvl = $('#' + key + ' > .lvl');
     val.cost = $('#' + key + ' > .cost');
   });

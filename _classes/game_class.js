@@ -59,7 +59,7 @@ var game = class Game {
     if (this.players[id].buyUpgrade(upg)){
       var nextLvl = this.players[id].upgrades[upg].lvl + 1; // gets next lvl of upgrade
       var nextUpg = this.upgrades[upg].getAt(nextLvl); // get the upgrade stats at players upgrade lvl
-      this.plaryers[id].setUpgrade(upg, nextUpg); // sets the upgrade for the player
+      this.players[id].setUpgrade(upg, nextUpg); // sets the upgrade for the player
 
       return true;
     }
