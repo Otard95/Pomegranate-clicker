@@ -2,7 +2,7 @@
  * ### Wrap is all in an anonymous function
  */
 
-//(function(){
+(function(){
 
 /*
  *¨Initilize socket.io
@@ -285,4 +285,4 @@ function cookieGet(id) {
 
 
 
-//})(); // END anonymous function
+})(); // END anonymous function

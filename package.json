@@ -1,6 +1,6 @@
 {
   "name": "pomegranate-clicker",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Server based clicker",
   "private": true,
   "author": "Stian Myklebostad",
