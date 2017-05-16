@@ -61,6 +61,10 @@ var game = class Game {
       this.plaryers[id].setUpgrade(upg, nextUpg); // sets the upgrade for the player
   }
 
+  removePlayer(pId) {
+    delete this.players[pId];
+  }
+
 };
 
 

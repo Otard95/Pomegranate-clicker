@@ -2,7 +2,7 @@
  * ### Wrap is all in an anonymous function
  */
 
-(function(){
+//(function(){
 
 /*
  *¨Initilize socket.io
@@ -19,8 +19,9 @@ socket.on('hasPlayer', function(data) {
     // Start game
     game.id = cookieGet('pId');
     game.me = data.player;
+    game.updateSeeds();
 
-    console.log(game);
+    //console.log(game);
 
   } else {
 
@@ -246,4 +247,4 @@ function cookieGet(id) {
 
 
 
-})(); // END anonymous function
+//})(); // END anonymous function

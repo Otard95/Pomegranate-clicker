@@ -143,7 +143,7 @@ io.on('connection', function(socket) {
                                   player: game.players[newid].getStriped()
                                 });
         CLIENT_LIST[socket.id].pId = newid;
-        console.log('[on.userCreate] (' + socket.id + ') created user: (' + newid + ')' + data.name);
+        console.log('[on.userCreate] (' + socket.id + ') created user: (' + newid + ') ' + data.name);
 
       } else {
 
@@ -235,8 +235,13 @@ io.on('connection', function(socket) {
  */
 
 function kick(socket, reason) {
+  var sId = socket.id;
+  var pId = CLIENT_LIST[sId].pId;
   socket.emit('kick', {msg: reason});
   socket.disconnect();
+  delete SOCKET_LIST[sId];
+  delete CLIENT_LIST[sId];
+  game.removePlayer(pId);
 }
 
 /*
