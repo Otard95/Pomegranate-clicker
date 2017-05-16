@@ -27,7 +27,8 @@ var upgrade = class Upgrade {
   }
 
   getSps(l) {
-    return this.sps * l + (this.sps * (this.lvlMult * l));
+    var r = this.sps * l + (this.sps * (this.lvlMult * (l-1)));
+    return r < 0 ? 0 : r;
   }
 
 };

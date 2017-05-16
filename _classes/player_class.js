@@ -13,8 +13,12 @@ var player = class Player {
     this.upgrades = upgrades;
   }
 
+  update(d) {
+    this.updateSeeds(d);
+  }
+
   updateSeeds(delta) {
-    this.seeds += sps * delta;
+    this.seeds += this.sps * delta;
   }
 
   updateSPS() {

@@ -20,6 +20,12 @@ var game = class Game {
     this.upgrades.backyardTree = new Upgrade('Backyard tree', 10, 0.2, 100, 0.8);
   }
 
+  update(d) {
+    for(var p in this.players) {
+      this.players[p].update(d);
+    }
+  }
+
   playerNameTaken(n) {
     for (var p in this.players) {
       if (this.players[p].name == n) return true;
@@ -57,7 +63,7 @@ var game = class Game {
     if (this.upgrades[upg] === undefined) return false; // upgrade doesn't exist
 
     if (this.players[id].buyUpgrade(upg)){
-      var nextLvl = this.players[id].upgrades[upg].lvl + 1; // gets next lvl of upgrade
+      var nextLvl = this.players[id].getUpgradeLvl(upg) + 1; // gets next lvl of upgrade
       var nextUpg = this.upgrades[upg].getAt(nextLvl); // get the upgrade stats at players upgrade lvl
       this.players[id].setUpgrade(upg, nextUpg); // sets the upgrade for the player
 

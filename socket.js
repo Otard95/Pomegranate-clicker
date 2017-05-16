@@ -26,7 +26,7 @@ var badChar = ['"', "'", '<', '>'];
 
 var client = function() {
   var c = {
-    pId: null,
+    pId: undefined,
     cookieProfileChech: false
   };
   return c;
@@ -197,8 +197,6 @@ io.on('connection', function(socket) {
 
     if ( validateInput(data.name, 'string') ) {
 
-      console.log('upg');
-
       var playerId = CLIENT_LIST[socket.id].pId;
       if ( game.upgradePurchase(playerId, data.name) ) {
         socket.emit('buyUpgrade', {
@@ -249,6 +247,19 @@ function kick(socket, reason) {
 /*
  * Game Clock
  */
+
+var clock = setInterval(function() {
+  game.update(time.delta());
+
+  for (var sId in SOCKET_LIST) {
+    var s = SOCKET_LIST[sId];
+    var pId = CLIENT_LIST[sId].pId;
+    if(pId !== undefined) {
+      s.emit('update', { player: game.players[pId].getStriped() });
+    }
+  }
+
+}, 1000);
 
 var time  = {
   last: +new Date(),

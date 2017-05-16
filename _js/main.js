@@ -93,6 +93,10 @@ socket.on('kick', function(data) {
   socket.disconnect();
 });
 
+socket.on('update', function(data) {
+  game.me = data.player;
+});
+
 var game = {
   id: null,
   me: {},
@@ -135,7 +139,7 @@ var game = {
     $.each(game.dom.updrades, function(key, val) {
       val.title.text(game.me.upgrades[key].name);
       val.lvl.text(game.me.upgrades[key].lvl);
-      val.cost.text(game.me.upgrades[key].cost);
+      val.cost.text(Math.ceil(game.me.upgrades[key].cost));
     });
   },
   init: function() {
