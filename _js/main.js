@@ -55,8 +55,6 @@ socket.on('userCreate', function(data) { // server response to userCreate
     // update UI
     game.updateUpgrades();
 
-    console.log(game);
-
   } else if(data.err) {
 
     game.preGame.msg('bad', data.msg);
@@ -74,6 +72,7 @@ socket.on('buyUpgrade', function(data) {
 
     game.updateUpgrades();
     game.updateSPS();
+    game.updateSeeds();
 
   } else {
     // Display fail msg to user
@@ -112,19 +111,22 @@ var game = {
         base: null,
         title: null,
         lvl: null,
-        cost: null
+        cost: null,
+        buy: null
       },
       backyardShrub: {
         base: null,
         title: null,
         lvl: null,
-        cost: null
+        cost: null,
+        buy: null
       },
       backyardTree: {
         base: null,
         title: null,
         lvl: null,
-        cost: null
+        cost: null,
+        buy: null
       }
     }
   },
@@ -136,9 +138,12 @@ var game = {
     this.dom.sps.text(Math.round(this.me.sps));
   },
   updateUpgrades: function() {
+    console.log('updateUpgrades');
     $.each(game.dom.updrades, function(key, val) {
+      console.log(key);
+      console.log(val);
       val.title.text(game.me.upgrades[key].name);
-      val.lvl.text(game.me.upgrades[key].lvl);
+      val.lvl.text(Math.round(game.me.upgrades[key].sps));
       val.cost.text(Math.ceil(game.me.upgrades[key].cost));
     });
   },
@@ -157,6 +162,13 @@ var game = {
       game.clicks++;
       game.updateSeeds();
 
+    });
+
+    $.each(game.dom.updrades, function(key, val) {
+      val.buy.click(function() {
+        console.log(key);
+        game.s.emit('buyUpgrade', { name: key });
+      });
     });
 
     // Initilize Clock
@@ -223,9 +235,10 @@ $(document).ready(function() {
   game.dom.sps = $('#spsCounter');
   $.each(game.dom.updrades, function(key, val) {
     val.base = $('#' + key);
-    val.title = $('#' + key + ' > .title');
-    val.lvl = $('#' + key + ' > .lvl');
-    val.cost = $('#' + key + ' > .cost');
+    val.title = val.base.find('.title');
+    val.lvl = val.base.find('.lvl');
+    val.cost = val.base.find('.cost');
+    val.buy = val.base.find('.buyBtn');
   });
   game.dom.pomegranate = $('#pomegranate');
 
