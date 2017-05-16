@@ -42,10 +42,10 @@ socket.on('userCreate', function(data) { // server response to userCreate
 
     game.id = data.id;
     game.me = data.player;
-    var d = new Date();
-    d.setTime(d.getTime() + (30*24*60*60*1000));
-    var expires = "expires="+ d.toUTCString();
-    document.cookie = "pId=" + data.id + ";" + expires + ";path=/";
+    var d = new Date(); // create new date
+    d.setTime(d.getTime() + (30*24*60*60*1000)); // set date 30 days from now
+    var expires = "expires="+ d.toUTCString(); // create the expiration cookie
+    document.cookie = "pId=" + data.id + ";" + expires + ";path=/"; // set the player id cookie
     game.preGame.hide();
 
     console.log(game);
