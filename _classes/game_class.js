@@ -56,9 +56,16 @@ var game = class Game {
   upgradePurchase(id, upg) {
     if (this.upgrades[upg] === undefined) return false; // upgrade doesn't exist
 
-      var nextLvl = this.players[id].buyUpgrade(upg); // returns the lvl of the upgrade
+    if (this.players[id].buyUpgrade(upg)){
+      var nextLvl = this.players[id].upgrades[upg].lvl + 1; // gets next lvl of upgrade
       var nextUpg = this.upgrades[upg].getAt(nextLvl); // get the upgrade stats at players upgrade lvl
       this.plaryers[id].setUpgrade(upg, nextUpg); // sets the upgrade for the player
+
+      return true;
+    }
+
+    return false;
+
   }
 
   removePlayer(pId) {

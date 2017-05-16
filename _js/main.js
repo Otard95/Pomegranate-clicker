@@ -139,7 +139,7 @@ var game = {
     game.clock = setInterval(function() {
 
       if(game.clicks !== 0) {
-        console.log('clicked: ' + game.clicks);
+        // console.log('clicked: ' + game.clicks);
         game.s.emit('click', { n: game.clicks });
         game.clicks = 0;
       }
