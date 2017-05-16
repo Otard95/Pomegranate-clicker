@@ -12,7 +12,7 @@ var socket = io();
 
 socket.on('hasPlayer', function(data) {
 
-  console.log('[on.hasPlayer] status: ' + data.status);
+  // console.log('[on.hasPlayer] status: ' + data.status);
 
   if(data.status) {
 
@@ -24,7 +24,7 @@ socket.on('hasPlayer', function(data) {
     game.updateSeeds();
     game.updateUpgrades();
 
-    //console.log(game);
+    //// console.log(game);
 
   } else {
 
@@ -40,7 +40,7 @@ socket.on('hasPlayer', function(data) {
 
 socket.on('userCreate', function(data) { // server response to userCreate
 
-  console.log('[userCreate] status: ' + data.status);
+  // console.log('[userCreate] status: ' + data.status);
 
   if (data.status) {
 
@@ -65,7 +65,7 @@ socket.on('userCreate', function(data) { // server response to userCreate
 
 socket.on('buyUpgrade', function(data) {
 
-  console.log('[buyUpgrade] status: ' + data.status);
+  // console.log('[buyUpgrade] status: ' + data.status);
 
   if (data.status) {
     game.me = data.player;
@@ -138,17 +138,17 @@ var game = {
     this.dom.sps.text(Math.round(this.me.sps));
   },
   updateUpgrades: function() {
-    console.log('updateUpgrades');
+    // console.log('updateUpgrades');
     $.each(game.dom.updrades, function(key, val) {
-      console.log(key);
-      console.log(val);
+      // console.log(key);
+      // console.log(val);
       val.title.text(game.me.upgrades[key].name);
       val.lvl.text(Math.round(game.me.upgrades[key].sps));
       val.cost.text(Math.ceil(game.me.upgrades[key].cost));
     });
   },
   init: function() {
-    console.log('init');
+    // console.log('init');
 
     var pId = cookieGet('pId');
     if (pId !== undefined) {
@@ -166,7 +166,7 @@ var game = {
 
     $.each(game.dom.updrades, function(key, val) {
       val.buy.click(function() {
-        console.log(key);
+        // console.log(key);
         game.s.emit('buyUpgrade', { name: key });
       });
     });
@@ -175,7 +175,7 @@ var game = {
     game.clock = setInterval(function() {
 
       if(game.clicks !== 0) {
-        // console.log('clicked: ' + game.clicks);
+        // // console.log('clicked: ' + game.clicks);
         game.s.emit('click', { n: game.clicks });
         game.clicks = 0;
       }
