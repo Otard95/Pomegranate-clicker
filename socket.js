@@ -25,11 +25,8 @@ var CLIENT_LIST = {
 var badChar = ['"', "'", '<', '>'];
 
 var client = function() {
-  var c = {
-    pId: undefined,
-    cookieProfileChech: false
-  };
-  return c;
+  this.pId = undefined;
+  this.cookieProfileChech = false;
 };
 
 /*
@@ -37,7 +34,7 @@ var client = function() {
  */
 
 var Game = require('./_classes/game_class.js'); // get the class
-var game = new Game(20); // instantiate class
+var game = new Game(40); // instantiate class
 
 /*
  * Socket Listners
@@ -83,9 +80,15 @@ io.on('connection', function(socket) {
       CLIENT_LIST[socket.id].cookieProfileChech = true;
       console.log('[on.hasPlayer] (' + socket.id + ') Player allready logged in');
 
-    } else if ( game.players[data.id] === undefined ){ // False player id
+    } else if ( game.players[data.id] === undefined ) { // False player id
 
-      socket.emit('hasPlayer', {status: false, err: false});
+      socket.emit('hasPlayer', {
+        status: false,
+        err: true,
+        title: 'Player Expired',
+        msg: 'Player link failed. The player does not exist on the server'
+      });
+
       CLIENT_LIST[socket.id].cookieProfileChech = true;
       console.log('[on.hasPlayer] (' + socket.id + ') Player id invalid');
 
