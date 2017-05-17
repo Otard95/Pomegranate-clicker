@@ -2,8 +2,8 @@
  * Main Game Controller module
  */
 
- var Player = require('./player_class.js');
- var Upgrade = require('./upgrade_class.js');
+var Player = require('./player_class.js');
+var Upgrade = require('./upgrade_class.js');
 
 var game = class Game {
 
