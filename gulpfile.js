@@ -2,10 +2,11 @@
 
 var   gulp        = require('gulp');
 var   sass        = require('gulp-sass');
-const pug         = require('gulp-pug2');
+// const pug         = require('gulp-pug2');
 var   browserSync = require('browser-sync').create();
 var   rename      = require('gulp-rename');
 var   uglify      = require('gulp-uglify');
+const autoprefix  = require('gulp-autoprefixer');
 
 gulp.task('browser-sync', function() {
     browserSync.init({ proxy: 'localhost:3000' });
@@ -25,6 +26,7 @@ gulp.task('sass', function () {
   return gulp.src(['./_sass/*.sass', './_sass/*.scss', '!./_sass/_*.sass', '!./_sass/_*.scss'])
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
     .pipe(rename({extname: '.min.css'}))
+    .pipe(autoprefix())
     .pipe(gulp.dest('./public/assets/css'))
     .pipe(browserSync.reload({ stream:true }));
 });
