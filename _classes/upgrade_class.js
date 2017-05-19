@@ -4,12 +4,13 @@
 
 var upgrade = class Upgrade {
 
-  constructor(name, sps, lvlMult, cost, costMult) {
+  constructor(name, sps, wm, wf, bc, ex) {
     this.name = name;
     this.sps = sps; // seeds per second
-    this.lvlMult = lvlMult; // sps increase per lvl
-    this.cost = cost;
-    this.costMult = costMult; // cost increase per lvl
+    this.wm = wm; // wave magnitude
+    this.wf = wf; // wave frequency
+    this.bc = bc; // base cost
+    this.ex = ex; // exponential growth
   }
 
   getAt(l) {
@@ -22,12 +23,16 @@ var upgrade = class Upgrade {
     return r;
   }
 
-  getCost(l) {
-    return this.cost + (this.cost * (this.costMult * l));
+  getCost(l) { // l == level == x | (bc-1) + wm*sin(wf*x) + (bc*0.8)*x + x^(ex*x)
+    return (this.bc - 1) +
+           (this.wm * Math.sin(this.wf * l)) +
+           ((this.bc * 0.8) * l) +
+           Math.pow(l, this.ex * l);
   }
 
-  getSps(l) {
-    var r = this.sps * l + (this.sps * (this.lvlMult * (l-1)));
+  getSps(l) { // l == level == x | -1 + (wm/2)sin((wf*0.831)*x) + (sps*2)x + x^(ex*x)
+    var r = -1 + ((this.wm / 2) * Math.sin((this.wf * -0.831) * l)) +
+            ((this.sps * 2) * l) + Math.pow(l, this.ex * l);
     return r < 0 ? 0 : r;
   }
 

@@ -15,9 +15,9 @@ var game = class Game {
                    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
                    'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_', '-', '%', '&', '?'];
     this.upgrades = {};
-    this.upgrades.deseeder = new Upgrade('Deseeder', 1, 0.1, 10, 0.5);
-    this.upgrades.backyardShrub = new Upgrade('Backyard shrub', 5, 0.2, 50, 0.8);
-    this.upgrades.backyardTree = new Upgrade('Backyard tree', 10, 0.2, 100, 0.8);
+    this.upgrades.deseeder = new Upgrade('Deseeder', 2, 200, 0.03, 10, 0.001);
+    this.upgrades.backyardShrub = new Upgrade('Backyard shrub', 10, 200, 0.06, 50, 0.001);
+    this.upgrades.backyardTree = new Upgrade('Backyard tree', 50, 200, 0.03, 150, 0.001);
   }
 
   update() {
