@@ -20,9 +20,9 @@ var game = class Game {
     this.upgrades.backyardTree = new Upgrade('Backyard tree', 10, 0.2, 100, 0.8);
   }
 
-  update(d) {
+  update() {
     for(var p in this.players) {
-      this.players[p].update(d);
+      this.players[p].update();
     }
   }
 

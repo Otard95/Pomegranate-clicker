@@ -2,6 +2,8 @@
  * Player class | the shell of any player
  */
 
+var Time = require('./time_class.js');
+
 var player = class Player {
 
   constructor(name, upgrades) {
@@ -11,10 +13,11 @@ var player = class Player {
     this.sps = 0;
     this.accumulated = 0;
     this.upgrades = upgrades;
+    this.time = new Time();
   }
 
-  update(d) {
-    this.updateSeeds(d);
+  update() {
+    this.updateSeeds(this.time.delta());
   }
 
   updateSeeds(delta) {
@@ -39,13 +42,15 @@ var player = class Player {
   }
 
   addSeeds(n) {
-    if (n > 45) return false;
+    if (n > 45 || this.time.since(this.lastClick) < 800) return false;
     this.accumulated += n;
     this.seeds += n;
+    this.lastClick = this.time.now();
     return true;
   }
 
   buyUpgrade(upg) {
+    this.update();
     if ( this.upgrades[upg].cost > this.seeds )
       return false; // the player can't aford the upgrade
 

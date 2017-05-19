@@ -24,10 +24,10 @@ var CLIENT_LIST = {
 
 var badChar = ['"', "'", '<', '>'];
 
-var client = function() {
+function Client() {
   this.pId = undefined;
   this.cookieProfileChech = false;
-};
+}
 
 /*
  * Initilize game class
@@ -46,7 +46,7 @@ io.on('connection', function(socket) {
   console.log('Socket connected | ID: ' + socket.id);
 
   SOCKET_LIST[socket.id] = socket;
-  CLIENT_LIST[socket.id] = client();
+  CLIENT_LIST[socket.id] = new Client();
 
   socket.on('hasPlayer', function(data) {
 
@@ -171,18 +171,16 @@ io.on('connection', function(socket) {
     if ( validateInput(data.n, 'number') ) { // Input valid
 
       var playerId = CLIENT_LIST[socket.id].pId;
-      if ( !game.players[playerId].addSeeds(data.n) ||
-           time.since(game.players[playerId].lastClick) < 800 ) {
+      if ( game.players[playerId].addSeeds(data.n) ) {
 
-        console.log('[on.click] (' + socket.id + ') Exceeded clicks per secound!');
-
-        kick(socket, 'Client exceeded clicks per secound. ' +
-                     'If you feel this is an error please contact us.');
+        socket.emit('click', { player: game.players[playerId].getStriped() });
 
       } else {
 
-        game.players[playerId].lastClick = (+new Date());
-        socket.emit('click', { player: game.players[playerId].getStriped() });
+        console.log('[on.click] (' + socket.id + ') Exceeded clicks per secound!');
+
+        kick(socket, 'Client exceeded clicks per secound.</br>' +
+                     'If you feel this is an error please contact us.');
 
       }
 
@@ -252,7 +250,7 @@ function kick(socket, reason) {
  */
 
 var clock = setInterval(function() {
-  game.update(time.delta());
+  game.update();
 
   for (var sId in SOCKET_LIST) {
     var s = SOCKET_LIST[sId];
@@ -263,19 +261,6 @@ var clock = setInterval(function() {
   }
 
 }, 1000);
-
-var time  = {
-  last: +new Date(),
-  delta: function() { // Returns the time in seconds since last frame
-    var r = ((+new Date()) - this.last) / 1000;
-    this.last = +new Date();
-    return r;
-  },
-  since: function(t) {
-    var now = (+new Date());
-    return now - t;
-  }
-};
 
 function validateInput(val, type) {
   if (val === null) return false; // Value should not be 'null'
