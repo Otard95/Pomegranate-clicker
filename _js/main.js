@@ -1,5 +1,5 @@
 /*
- * ### Wrap is all in an anonymous function
+ * ### Wrap it all in an anonymous function
  */
 
 (function(){
@@ -21,8 +21,7 @@ socket.on('hasPlayer', function(data) {
     game.me = data.player;
 
     // update UI
-    game.updateSeeds();
-    game.updateUpgrades();
+    game.updateUI();
 
     //console.log(game);
 
@@ -54,7 +53,7 @@ socket.on('userCreate', function(data) { // server response to userCreate
     game.preGame.hide();
 
     // update UI
-    game.updateUpgrades();
+    game.updateUI();
 
   } else if(data.err) {
 
@@ -71,9 +70,7 @@ socket.on('buyUpgrade', function(data) {
   if (data.status) {
     game.me = data.player;
 
-    game.updateUpgrades();
-    game.updateSPS();
-    game.updateSeeds();
+    game.updateUI();
 
   } else {
     // Display fail msg to user
@@ -102,6 +99,8 @@ var game = {
   me: {},
   clicks: 0,
   clock: null,
+  draw: null,
+  time: new Time(),
   s: socket,
   dom: {
     seeds: null,
@@ -145,6 +144,11 @@ var game = {
       val.cost.text(Math.ceil(game.me.upgrades[key].cost));
     });
   },
+  updateUI: function() {
+    game.updateUpgrades();
+    game.updateSPS();
+    game.updateSeeds();
+  },
   init: function() {
     console.log('init');
 
@@ -181,6 +185,14 @@ var game = {
       game.updateSeeds();
 
     }, 1000);
+
+    // Create draw loop
+    game.draw = setInterval(function() {
+
+      game.me.seeds += game.me.sps * game.time.delta();
+      game.updateSeeds();
+
+    }, 1000/30);
 
   }
 };
@@ -269,6 +281,26 @@ $(document).ready(function() {
   game.init();
 
 });
+
+function Time() {
+  this.last = +new Date();
+
+  this.delta = function() { // Returns the time in seconds since last request
+    var r = ((+new Date()) - this.last) / 1000;
+    this.last = +new Date();
+    return r;
+  };
+
+  this.since = function(t) {
+    var now = (+new Date());
+    return now - t;
+  };
+
+  this.now = function() {
+    return (+new Date());
+  };
+
+}
 
 var cookie = {
   get: function(id) {
