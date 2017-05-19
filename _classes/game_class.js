@@ -17,7 +17,7 @@ var game = class Game {
     this.upgrades = {};
     this.upgrades.deseeder = new Upgrade('Deseeder', 2, 200, 0.03, 10, 0.001);
     this.upgrades.backyardShrub = new Upgrade('Backyard shrub', 10, 200, 0.06, 50, 0.001);
-    this.upgrades.backyardTree = new Upgrade('Backyard tree', 50, 200, 0.03, 150, 0.001);
+    this.upgrades.backyardTree = new Upgrade('Backyard tree', 50, 200, 0.1, 150, 0.001);
   }
 
   update() {

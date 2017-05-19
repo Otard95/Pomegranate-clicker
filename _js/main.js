@@ -111,6 +111,7 @@ var game = {
         base: null,
         title: null,
         lvl: null,
+        sps: null,
         cost: null,
         buy: null
       },
@@ -118,6 +119,7 @@ var game = {
         base: null,
         title: null,
         lvl: null,
+        sps: null,
         cost: null,
         buy: null
       },
@@ -125,6 +127,7 @@ var game = {
         base: null,
         title: null,
         lvl: null,
+        sps: null,
         cost: null,
         buy: null
       }
@@ -140,7 +143,8 @@ var game = {
   updateUpgrades: function() {
     $.each(game.dom.updrades, function(key, val) {
       val.title.text(game.me.upgrades[key].name);
-      val.lvl.text(Math.round(game.me.upgrades[key].sps));
+      val.lvl.text(game.me.upgrades[key].lvl);
+      val.sps.text(Math.round(game.me.upgrades[key].sps));
       val.cost.text(Math.ceil(game.me.upgrades[key].cost));
     });
   },
@@ -247,6 +251,7 @@ $(document).ready(function() {
     val.base = $('#' + key);
     val.title = val.base.find('.title');
     val.lvl = val.base.find('.lvl');
+    val.sps = val.base.find('.sps');
     val.cost = val.base.find('.cost');
     val.buy = val.base.find('.buyBtn');
   });
